@@ -1,0 +1,58 @@
+{% extends 'reviews/base.html' %}
+
+{% block content %}
+    <header class="page-header">
+        <a class="btn primary-btn" href="{% url 'review-create' %}">리뷰 작성</a>
+    </header>
+
+    <form class="sort-form" method="get">
+        <label for="sort">정렬</label>
+
+        <select name="sort" id="sort">
+            <option value="latest" {% if sort == 'latest' %}selected{% endif %}>
+                최신순
+            </option>
+
+            <option value="title" {% if sort == 'title' %}selected{% endif %}>
+                제목 이름 순
+            </option>
+
+            <option value="rating_high" {% if sort == 'rating_high' %}selected{% endif %}>
+                별점 높은 순
+            </option>
+
+            <option value="rating_low" {% if sort == 'rating_low' %}selected{% endif %}>
+                별점 낮은 순
+            </option>
+
+            <option value="running_time_short" {% if sort == 'running_time_short' %}selected{% endif %}>
+                상영 시간 짧은 순
+            </option>
+
+            <option value="running_time_long" {% if sort == 'running_time_long' %}selected{% endif %}>
+                상영 시간 긴 순
+            </option>
+        </select>
+
+        <button class="btn" type="submit">적용</button>
+    </form>
+
+    <section class="review-list">
+        {% for review in reviews %}
+            <article class="review-card">
+                <h2>
+                    <a href="{% url 'review-detail' review.pk %}">
+                        {{ review.title }}
+                    </a>
+                </h2>
+
+                <p>개봉 년도: {{ review.release_year }}</p>
+                <p>장르: {{ review.get_genre_display }}</p>
+                <p>별점: {{ review.rating }}</p>
+                <p>상영 시간: {{ review.running_time_text }}</p>
+            </article>
+        {% empty %}
+            <p class="empty-text">아직 작성된 리뷰가 없습니다.</p>
+        {% endfor %}
+    </section>
+{% endblock %}

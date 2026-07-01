@@ -1,0 +1,15 @@
+{% extends 'reviews/base.html' %}
+
+{% block content %}
+    <section class="delete-card">
+        <h1>리뷰 삭제</h1>
+
+        <p>"{{ review.title }}" 리뷰를 정말 삭제하시겠습니까?</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <button class="btn danger-btn" type="submit">삭제</button>
+            <a class="btn" href="{% url 'review-detail' review.pk %}">취소</a>
+        </form>
+    </section>
+{% endblock %}

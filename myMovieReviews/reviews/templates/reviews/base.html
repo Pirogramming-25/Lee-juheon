@@ -1,0 +1,20 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>MyMovieReviews</title>
+    <link rel="stylesheet" href="{% static 'reviews/css/style.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <a class="logo-link" href="{% url 'review-list' %}">MyMovieReviews</a>
+    </header>
+
+    <main class="page">
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>
