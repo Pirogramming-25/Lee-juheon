@@ -1,0 +1,51 @@
+{% extends 'reviews/base.html' %}
+
+{% block content %}
+    <header class="page-header">
+        <h1>
+            {% if review %}
+                리뷰 수정
+            {% else %}
+                리뷰 작성
+            {% endif %}
+        </h1>
+
+        <a class="btn" href="{% url 'review-list' %}">목록으로</a>
+    </header>
+
+    <form class="review-form" method="POST">
+        {% csrf_token %}
+
+        <label for="title">영화 제목</label>
+        <input id="title" type="text" name="title" value="{{ review.title }}">
+
+        <label for="release_year">개봉 년도</label>
+        <input id="release_year" type="number" name="release_year" value="{{ review.release_year }}">
+
+        <label for="director">감독</label>
+        <input id="director" type="text" name="director" value="{{ review.director }}">
+
+        <label for="actor">주연</label>
+        <input id="actor" type="text" name="actor" value="{{ review.actor }}">
+
+        <label for="genre">장르</label>
+        <select id="genre" name="genre">
+            {% for value, label in genre_choices %}
+                <option value="{{ value }}" {% if review.genre == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="rating">별점</label>
+        <input id="rating" type="number" step="0.1" name="rating" value="{{ review.rating }}">
+
+        <label for="running_time">러닝타임</label>
+        <input id="running_time" type="number" name="running_time" value="{{ review.running_time }}">
+
+        <label for="content">리뷰 내용</label>
+        <textarea id="content" name="content">{{ review.content }}</textarea>
+
+        <button class="btn primary-btn" type="submit">저장</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'reviews/base.html' %}
+
+{% block content %}
+    <article class="detail-card">
+        <h1>{{ review.title }}</h1>
+
+        <p>감독: {{ review.director }}</p>
+        <p>주연: {{ review.actor }}</p>
+        <p>장르: {{ review.get_genre_display }}</p>
+        <p>별점: {{ review.rating }}</p>
+        <p>러닝타임: {{ review.running_time_text }}</p>
+
+        <div class="review-content">
+            <p>{{ review.content }}</p>
+        </div>
+    </article>
+
+    <div class="button-group">
+        <a class="btn" href="{% url 'review-update' review.pk %}">수정</a>
+        <a class="btn danger-btn" href="{% url 'review-delete' review.pk %}">삭제</a>
+    </div>
+{% endblock %}
