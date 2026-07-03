@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_POST
+from django.template.loader import render_to_string
 
 from .models import Idea, DevTool, IdeaStar
 from .forms import IdeaForm, DevToolForm
@@ -20,7 +21,6 @@ def idea_list(request):
         .annotate(star_count=Count('stars'))
     )
 
-    # 검색 / 필터링 기능
     if q:
         ideas = ideas.filter(
             Q(title__icontains=q) |
@@ -28,7 +28,6 @@ def idea_list(request):
             Q(devtool__kind__icontains=q)
         )
 
-    # 정렬 기능
     if sort == 'name':
         ideas = ideas.order_by('title')
     elif sort == 'interest':
@@ -59,6 +58,17 @@ def idea_list(request):
         'sort': sort,
         'q': q,
     }
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        html = render_to_string(
+            'ideas/_idea_results.html',
+            context,
+            request=request
+        )
+
+        return JsonResponse({
+            'html': html,
+        })
 
     return render(request, 'ideas/idea_list.html', context)
 

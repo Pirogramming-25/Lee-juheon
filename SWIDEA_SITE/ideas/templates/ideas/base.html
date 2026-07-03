@@ -79,7 +79,7 @@ document.addEventListener('click', function (event) {
                     <a href="{% url 'ideas:idea-list' %}">아이디어 관리</a>
                     <a href="{% url 'ideas:devtool-create' %}">개발툴 등록</a>
                     <a href="{% url 'ideas:devtool-list' %}">개발툴 관리</a>
-
+                
                     {% if user.is_authenticated %}
                         <a href="{% url 'users:profile' %}">Profile</a>
 
@@ -91,6 +91,7 @@ document.addEventListener('click', function (event) {
                         <a href="{% url 'users:login' %}">로그인</a>
                         <a href="{% url 'users:signup' %}">회원가입</a>
                     {% endif %}
+                </nav>
             </div>
         </header>
 

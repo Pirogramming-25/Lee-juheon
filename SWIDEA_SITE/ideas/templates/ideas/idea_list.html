@@ -4,15 +4,16 @@
 <h1 class="page-title">Idea List</h1>
 <p class="page-subtitle">나만의 아이디어를 잊지 말고 기록해보세요.</p>
 
-<form class="top-controls" method="GET">
+<form class="top-controls" id="idea-search-form" method="GET">
     <input
+        id="idea-search-input"
         type="text"
         name="q"
         value="{{ q }}"
         placeholder="제목, 개발툴 검색"
     >
 
-    <select name="sort">
+    <select id="idea-sort-select" name="sort">
         <option value="latest" {% if sort == 'latest' %}selected{% endif %}>최신순</option>
         <option value="star" {% if sort == 'star' %}selected{% endif %}>찜하기순</option>
         <option value="interest" {% if sort == 'interest' %}selected{% endif %}>관심도순</option>
@@ -21,148 +22,74 @@
     </select>
 
     <button type="submit">검색</button>
-
-    {% if q %}
-        <a class="reset-link" href="{% url 'ideas:idea-list' %}">초기화</a>
-    {% endif %}
+    <button type="button" id="idea-search-reset">초기화</button>
 </form>
 
-<div class="idea-grid">
-    {% for idea in ideas %}
-        <div class="idea-card">
-            {% if user.is_authenticated %}
-                <button
-                    class="star-button js-star-button"
-                    type="button"
-                    data-url="{% url 'ideas:idea-star-toggle' idea.pk %}"
-                    data-on-text="★"
-                    data-off-text="☆"
-                >
-                    {% if idea.pk in starred_ids %}
-                        ★
-                    {% else %}
-                        ☆
-                    {% endif %}
-                </button>
-            {% else %}
-                <a class="star-button" href="{% url 'users:login' %}">☆</a>
-            {% endif %}
-
-            {% if idea.image %}
-                <img class="idea-thumb" src="{{ idea.image.url }}" alt="{{ idea.title }}">
-            {% else %}
-                <div class="idea-thumb no-image">No Image</div>
-            {% endif %}
-
-            <h2 class="idea-card-title">
-                <a href="{% url 'ideas:idea-detail' idea.pk %}">
-                    {{ idea.title }}
-                </a>
-            </h2>
-
-            <div class="idea-divider"></div>
-
-            <p class="idea-meta">예상 개발 툴 : {{ idea.devtool.name }}</p>
-
-            <p class="idea-meta">
-                아이디어 관심도 :
-                <span id="interest-{{ idea.pk }}">{{ idea.interest }}</span>
-
-                <button
-                    class="small-btn js-interest-button"
-                    type="button"
-                    data-url="{% url 'ideas:idea-interest-update' idea.pk 'plus' %}"
-                    data-target="interest-{{ idea.pk }}"
-                >
-                    +
-                </button>
-
-                <button
-                    class="small-btn js-interest-button"
-                    type="button"
-                    data-url="{% url 'ideas:idea-interest-update' idea.pk 'minus' %}"
-                    data-target="interest-{{ idea.pk }}"
-                >
-                    -
-                </button>
-            </p>
-        </div>
-    {% empty %}
-        <p class="empty">등록된 아이디어가 없습니다.</p>
-    {% endfor %}
-</div>
-
-<div class="pagination">
-    {% if page_obj.has_previous %}
-        <a class="page-arrow" href="?q={{ q|urlencode }}&sort={{ sort }}&page={{ page_obj.previous_page_number }}">‹</a>
-    {% endif %}
-
-    {% for num in page_obj.paginator.page_range %}
-        {% if num == page_obj.number %}
-            <span class="page-number active">{{ num }}</span>
-        {% else %}
-            <a class="page-number" href="?q={{ q|urlencode }}&sort={{ sort }}&page={{ num }}">{{ num }}</a>
-        {% endif %}
-    {% endfor %}
-
-    {% if page_obj.has_next %}
-        <a class="page-arrow" href="?q={{ q|urlencode }}&sort={{ sort }}&page={{ page_obj.next_page_number }}">›</a>
-    {% endif %}
+<div id="idea-results">
+    {% include 'ideas/_idea_results.html' %}
 </div>
 {% endblock %}
 
 {% block script %}
 <script>
-function getCookie(name) {
-    const cookies = document.cookie.split(';');
+const searchForm = document.getElementById('idea-search-form');
+const searchInput = document.getElementById('idea-search-input');
+const sortSelect = document.getElementById('idea-sort-select');
+const resetButton = document.getElementById('idea-search-reset');
+const resultsBox = document.getElementById('idea-results');
 
-    for (let cookie of cookies) {
-        cookie = cookie.trim();
-
-        if (cookie.startsWith(name + '=')) {
-            return decodeURIComponent(cookie.substring(name.length + 1));
-        }
-    }
-
-    return null;
+function fetchIdeas(url) {
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+    })
+    .then(function (response) {
+        return response.json();
+    })
+    .then(function (data) {
+        resultsBox.innerHTML = data.html;
+        window.history.pushState(null, '', url);
+    });
 }
 
-const csrftoken = getCookie('csrftoken');
+function makeSearchUrl(page = 1) {
+    const params = new URLSearchParams(new FormData(searchForm));
+    params.set('page', page);
 
-document.querySelectorAll('.js-star-button').forEach((button) => {
-    button.addEventListener('click', () => {
-        fetch(button.dataset.url, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrftoken,
-                'X-Requested-With': 'XMLHttpRequest',
-            },
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            const onText = button.dataset.onText || '★';
-            const offText = button.dataset.offText || '☆';
+    return `${window.location.pathname}?${params.toString()}`;
+}
 
-            button.textContent = data.is_starred ? onText : offText;
-        });
-    });
+searchForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    const url = makeSearchUrl(1);
+    fetchIdeas(url);
 });
 
-document.querySelectorAll('.js-interest-button').forEach((button) => {
-    button.addEventListener('click', () => {
-        fetch(button.dataset.url, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrftoken,
-                'X-Requested-With': 'XMLHttpRequest',
-            },
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            const target = document.getElementById(button.dataset.target);
-            target.textContent = data.interest;
-        });
-    });
+sortSelect.addEventListener('change', function () {
+    const url = makeSearchUrl(1);
+    fetchIdeas(url);
+});
+
+resetButton.addEventListener('click', function () {
+    searchInput.value = '';
+    sortSelect.value = 'latest';
+
+    const url = makeSearchUrl(1);
+    fetchIdeas(url);
+});
+
+resultsBox.addEventListener('click', function (event) {
+    const pageLink = event.target.closest('.pagination a');
+
+    if (!pageLink) {
+        return;
+    }
+
+    event.preventDefault();
+    fetchIdeas(pageLink.href);
 });
 </script>
 {% endblock %}
