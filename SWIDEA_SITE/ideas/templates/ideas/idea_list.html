@@ -1,0 +1,52 @@
+{% extends 'ideas/base.html' %}
+
+{% block content %}
+<h1>아이디어 관리</h1>
+
+<form class="sort-form" method="GET">
+    <select name="sort">
+        <option value="latest" {% if sort == 'latest' %}selected{% endif %}>최신순</option>
+        <option value="old" {% if sort == 'old' %}selected{% endif %}>등록순</option>
+        <option value="name" {% if sort == 'name' %}selected{% endif %}>이름순</option>
+        <option value="interest" {% if sort == 'interest' %}selected{% endif %}>관심도순</option>
+    </select>
+    <button type="submit">정렬</button>
+</form>
+
+<div class="idea-list">
+    {% for idea in ideas %}
+        <div class="idea-card">
+            <form class="star-form" action="{% url 'ideas:idea-star-toggle' idea.pk %}" method="POST">
+                {% csrf_token %}
+                <button class="star-button" type="submit">
+                    {% if idea.pk in starred_ids %}
+                        ★
+                    {% else %}
+                        ☆
+                    {% endif %}
+                </button>
+            </form>
+
+            {% if idea.image %}
+                <img class="idea-image" src="{{ idea.image.url }}" alt="{{ idea.title }}">
+            {% endif %}
+
+            <h2>
+                <a href="{% url 'ideas:idea-detail' idea.pk %}">
+                    {{ idea.title }}
+                </a>
+            </h2>
+
+            <p class="meta">개발툴: {{ idea.devtool.name }}</p>
+            <p class="meta">관심도: <span class="interest-number">{{ idea.interest }}</span></p>
+
+            <div class="interest-box">
+                <a class="small-btn" href="{% url 'ideas:idea-interest-update' idea.pk 'plus' %}">+</a>
+                <a class="small-btn" href="{% url 'ideas:idea-interest-update' idea.pk 'minus' %}">-</a>
+            </div>
+        </div>
+    {% empty %}
+        <p class="empty">등록된 아이디어가 없습니다.</p>
+    {% endfor %}
+</div>
+{% endblock %}

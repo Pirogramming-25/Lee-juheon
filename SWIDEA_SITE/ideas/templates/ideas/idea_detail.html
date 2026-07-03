@@ -1,0 +1,40 @@
+{% extends 'ideas/base.html' %}
+
+{% block content %}
+<div class="detail-card">
+    <h1>{{ idea.title }}</h1>
+
+    <form action="{% url 'ideas:idea-star-toggle' idea.pk %}" method="POST">
+        {% csrf_token %}
+        <button type="submit">
+            {% if is_starred %}
+                ★ 찜됨
+            {% else %}
+                ☆ 찜하기
+            {% endif %}
+        </button>
+    </form>
+
+    <br>
+
+    {% if idea.image %}
+        <img src="{{ idea.image.url }}" alt="{{ idea.title }}">
+    {% endif %}
+
+    <p>{{ idea.content }}</p>
+    <p class="meta">관심도: {{ idea.interest }}</p>
+
+    <p class="meta">
+        개발툴:
+        <a href="{% url 'ideas:devtool-detail' idea.devtool.pk %}">
+            {{ idea.devtool.name }}
+        </a>
+    </p>
+
+    <div class="detail-actions">
+        <a class="btn" href="{% url 'ideas:idea-update' idea.pk %}">수정</a>
+        <a class="btn danger" href="{% url 'ideas:idea-delete' idea.pk %}">삭제</a>
+        <a class="btn gray" href="{% url 'ideas:idea-list' %}">목록</a>
+    </div>
+</div>
+{% endblock %}

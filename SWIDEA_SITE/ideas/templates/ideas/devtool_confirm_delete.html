@@ -1,0 +1,18 @@
+{% extends 'ideas/base.html' %}
+
+{% block content %}
+<div class="delete-card">
+    <h1>개발툴 삭제</h1>
+
+    <p>{{ devtool.name }} 개발툴을 삭제하시겠습니까?</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button class="danger" type="submit">삭제</button>
+    </form>
+
+    <br>
+
+    <a class="btn gray" href="{% url 'ideas:devtool-detail' devtool.pk %}">취소</a>
+</div>
+{% endblock %}

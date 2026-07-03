@@ -1,0 +1,13 @@
+{% extends 'ideas/base.html' %}
+
+{% block content %}
+<div class="form-card">
+    <h1>개발툴 등록/수정</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">저장</button>
+    </form>
+</div>
+{% endblock %}
