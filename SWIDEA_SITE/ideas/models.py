@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -11,6 +12,11 @@ class DevTool(models.Model):
 
 
 class Idea(models.Model):
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='ideas'
+    )
     title = models.CharField(max_length=100)
     image = models.ImageField(upload_to='ideas/', blank=True, null=True)
     content = models.TextField()
@@ -28,12 +34,20 @@ class Idea(models.Model):
 
 
 class IdeaStar(models.Model):
-    idea = models.OneToOneField(
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='idea_stars'
+    )
+    idea = models.ForeignKey(
         Idea,
         on_delete=models.CASCADE,
-        related_name='star'
+        related_name='stars'
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ('user', 'idea')
+
     def __str__(self):
-        return f'{self.idea.title} 찜'
+        return f'{self.user} - {self.idea.title}'

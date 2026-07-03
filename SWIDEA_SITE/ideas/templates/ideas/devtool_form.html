@@ -1,13 +1,36 @@
 {% extends 'ideas/base.html' %}
 
 {% block content %}
-<div class="form-card">
-    <h1>개발툴 등록/수정</h1>
+<h1 class="page-title">
+    {% if form.instance.pk %}
+        DevTool Detail Update
+    {% else %}
+        DevTool Register
+    {% endif %}
+</h1>
 
+<p class="page-subtitle">
+    {% if form.instance.pk %}
+        개발툴 세부내용 수정 페이지입니다. 개발툴에 대해 수정사항이 있으면 고쳐보세요.
+    {% else %}
+        개발툴 등록 페이지입니다. 자신이 다룰 수 있는 개발툴을 등록해보세요.
+    {% endif %}
+</p>
+
+<div class="form-wrap">
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">저장</button>
+
+        <div class="submit-wrap">
+            <button class="submit-btn" type="submit">
+                {% if form.instance.pk %}
+                    UPDATE
+                {% else %}
+                    SUBMIT
+                {% endif %}
+            </button>
+        </div>
     </form>
 </div>
 {% endblock %}

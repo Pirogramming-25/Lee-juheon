@@ -1,18 +1,18 @@
 {% extends 'ideas/base.html' %}
 
 {% block content %}
-<div class="delete-card">
-    <h1>아이디어 삭제</h1>
+<h1 class="page-title">아이디어 삭제</h1>
 
-    <p>{{ idea.title }} 아이디어를 삭제하시겠습니까?</p>
+<p class="page-subtitle">
+    {{ idea.title }} 아이디어를 삭제하시겠습니까?
+</p>
 
+<div class="delete-actions">
     <form method="POST">
         {% csrf_token %}
-        <button class="danger" type="submit">삭제</button>
+        <button class="btn btn-delete" type="submit">삭제</button>
     </form>
 
-    <br>
-
-    <a class="btn gray" href="{% url 'ideas:idea-detail' idea.pk %}">취소</a>
+    <a class="btn btn-list" href="{% url 'ideas:idea-detail' idea.pk %}">취소</a>
 </div>
 {% endblock %}

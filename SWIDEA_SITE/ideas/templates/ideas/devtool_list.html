@@ -1,20 +1,50 @@
 {% extends 'ideas/base.html' %}
 
 {% block content %}
-<h1>개발툴 관리</h1>
+<h1 class="page-title">DevTool List</h1>
+<p class="page-subtitle">
+    개발툴 목록 페이지입니다. 자신이 사용 가능한 개발툴의 목록을 확인해 보세요.
+</p>
 
-<div class="devtool-list">
-    {% for devtool in devtools %}
-        <div class="devtool-card">
-            <h2>
-                <a href="{% url 'ideas:devtool-detail' devtool.pk %}">
-                    {{ devtool.name }}
-                </a>
-            </h2>
-            <p class="meta">종류: {{ devtool.kind }}</p>
-        </div>
-    {% empty %}
-        <p class="empty">등록된 개발툴이 없습니다.</p>
-    {% endfor %}
+<div class="devtool-table-wrap">
+    <table class="devtool-table">
+        <tbody>
+            {% for devtool in devtools %}
+                <tr>
+                    <td class="devtool-name">
+                        <a href="{% url 'ideas:devtool-detail' devtool.pk %}">
+                            {{ devtool.name }}
+                        </a>
+                    </td>
+
+                    <td class="devtool-kind">
+                        {{ devtool.kind }}
+                    </td>
+
+                    <td class="devtool-content">
+                        {{ devtool.content|truncatechars:80 }}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3" class="empty-row">
+                        등록된 개발툴이 없습니다.
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">‹</a>
+    {% endif %}
+
+    <span>{{ page_obj.number }}</span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">›</a>
+    {% endif %}
 </div>
 {% endblock %}
