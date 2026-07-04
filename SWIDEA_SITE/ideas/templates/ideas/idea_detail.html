@@ -1,0 +1,66 @@
+{% extends 'ideas/base.html' %}
+
+{% block content %}
+<h1 class="page-title">Idea Detail</h1>
+<p class="page-subtitle">
+    아이디어 세부내용 페이지 입니다. 구현하려 한 아이디어들을 자세히 살펴보세요.
+</p>
+
+<div class="detail-box">
+    {% if idea.image %}
+        <img class="detail-image" src="{{ idea.image.url }}" alt="{{ idea.title }}">
+    {% else %}
+        <div class="detail-image no-image">No Image</div>
+    {% endif %}
+
+    <div class="detail-content">
+        <h2 class="detail-title">
+            {{ idea.title }}
+
+            {% if user.is_authenticated %}
+                <button
+                    class="detail-star-button js-star-button"
+                    type="button"
+                    data-url="{% url 'ideas:idea-star-toggle' idea.pk %}"
+                    data-on-text="★"
+                    data-off-text="☆"
+                >
+                    {% if is_starred %}
+                        ★
+                    {% else %}
+                        ☆
+                    {% endif %}
+                </button>
+            {% else %}
+                <a class="detail-star-button" href="{% url 'users:login' %}">☆</a>
+            {% endif %}
+        </h2>
+
+        <p class="detail-text">
+            1) 아이디어 관심도<br>
+            {{ idea.interest }}
+        </p>
+
+        <p class="detail-text">
+            2) 예상 개발 툴<br>
+            <a href="{% url 'ideas:devtool-detail' idea.devtool.pk %}">
+                {{ idea.devtool.name }}
+            </a>
+        </p>
+
+        <p class="detail-text">
+            3) 아이디어 설명<br>
+            {{ idea.content }}
+        </p>
+    </div>
+</div>
+
+<div class="btn-row">
+    {% if user == idea.author %}
+        <a class="btn btn-delete" href="{% url 'ideas:idea-delete' idea.pk %}">삭제</a>
+        <a class="btn btn-edit" href="{% url 'ideas:idea-update' idea.pk %}">수정</a>
+    {% endif %}
+
+    <a class="btn btn-list" href="{% url 'ideas:idea-list' %}">목록</a>
+</div>
+{% endblock %}

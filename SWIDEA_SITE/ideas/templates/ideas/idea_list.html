@@ -1,0 +1,95 @@
+{% extends 'ideas/base.html' %}
+
+{% block content %}
+<h1 class="page-title">Idea List</h1>
+<p class="page-subtitle">나만의 아이디어를 잊지 말고 기록해보세요.</p>
+
+<form class="top-controls" id="idea-search-form" method="GET">
+    <input
+        id="idea-search-input"
+        type="text"
+        name="q"
+        value="{{ q }}"
+        placeholder="제목, 개발툴 검색"
+    >
+
+    <select id="idea-sort-select" name="sort">
+        <option value="latest" {% if sort == 'latest' %}selected{% endif %}>최신순</option>
+        <option value="star" {% if sort == 'star' %}selected{% endif %}>찜하기순</option>
+        <option value="interest" {% if sort == 'interest' %}selected{% endif %}>관심도순</option>
+        <option value="old" {% if sort == 'old' %}selected{% endif %}>등록순</option>
+        <option value="name" {% if sort == 'name' %}selected{% endif %}>이름순</option>
+    </select>
+
+    <button type="submit">검색</button>
+    <button type="button" id="idea-search-reset">초기화</button>
+</form>
+
+<div id="idea-results">
+    {% include 'ideas/_idea_results.html' %}
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+const searchForm = document.getElementById('idea-search-form');
+const searchInput = document.getElementById('idea-search-input');
+const sortSelect = document.getElementById('idea-sort-select');
+const resetButton = document.getElementById('idea-search-reset');
+const resultsBox = document.getElementById('idea-results');
+
+function fetchIdeas(url) {
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+    })
+    .then(function (response) {
+        return response.json();
+    })
+    .then(function (data) {
+        resultsBox.innerHTML = data.html;
+        window.history.pushState(null, '', url);
+    });
+}
+
+function makeSearchUrl(page = 1) {
+    const params = new URLSearchParams(new FormData(searchForm));
+    params.set('page', page);
+
+    return `${window.location.pathname}?${params.toString()}`;
+}
+
+searchForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    const url = makeSearchUrl(1);
+    fetchIdeas(url);
+});
+
+sortSelect.addEventListener('change', function () {
+    const url = makeSearchUrl(1);
+    fetchIdeas(url);
+});
+
+resetButton.addEventListener('click', function () {
+    searchInput.value = '';
+    sortSelect.value = 'latest';
+
+    const url = makeSearchUrl(1);
+    fetchIdeas(url);
+});
+
+resultsBox.addEventListener('click', function (event) {
+    const pageLink = event.target.closest('.pagination a');
+
+    if (!pageLink) {
+        return;
+    }
+
+    event.preventDefault();
+    fetchIdeas(pageLink.href);
+});
+</script>
+{% endblock %}

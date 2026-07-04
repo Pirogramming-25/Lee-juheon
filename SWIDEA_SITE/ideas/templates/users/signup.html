@@ -1,0 +1,13 @@
+{% extends 'ideas/base.html' %}
+
+{% block content %}
+<div class="form-card">
+    <h1>회원가입</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">회원가입</button>
+    </form>
+</div>
+{% endblock %}

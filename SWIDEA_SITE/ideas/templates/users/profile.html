@@ -1,0 +1,50 @@
+{% extends 'ideas/base.html' %}
+
+{% block content %}
+<h1 class="page-title">Profile</h1>
+<p class="page-subtitle">
+    내 프로필과 내가 작성한 아이디어를 확인해보세요.
+</p>
+
+<div class="profile-box">
+    <div class="profile-image-wrap">
+        {% if user.profile_image %}
+            <img src="{{ user.profile_image.url }}" alt="{{ user.username }}">
+        {% else %}
+            <div class="profile-no-image">No Image</div>
+        {% endif %}
+    </div>
+
+    <div class="profile-info">
+        <p>
+            <strong>아이디</strong>
+            {{ user.username }}
+        </p>
+
+        <p>
+            <strong>닉네임</strong>
+            {% if user.nickname %}
+                {{ user.nickname }}
+            {% else %}
+                닉네임 없음
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<div class="profile-idea-section">
+    <h2 class="profile-section-title">내가 작성한 아이디어</h2>
+
+    <div class="profile-idea-list">
+        {% for idea in my_ideas %}
+            <p>
+                <a href="{% url 'ideas:idea-detail' idea.pk %}">
+                    {{ idea.title }}
+                </a>
+            </p>
+        {% empty %}
+            <p class="empty-text">작성한 아이디어가 없습니다.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

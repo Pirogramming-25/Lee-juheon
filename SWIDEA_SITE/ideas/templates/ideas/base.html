@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My SW Idea Manage</title>
+    <link rel="stylesheet" href="{% static 'ideas/css/style.css' %}">
+</head>
+<script>
+function getCookie(name) {
+    const cookies = document.cookie.split(';');
+
+    for (let cookie of cookies) {
+        cookie = cookie.trim();
+
+        if (cookie.startsWith(name + '=')) {
+            return decodeURIComponent(cookie.substring(name.length + 1));
+        }
+    }
+
+    return null;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+document.addEventListener('click', function (event) {
+    const starButton = event.target.closest('.js-star-button');
+
+    if (starButton) {
+        fetch(starButton.dataset.url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        })
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            const onText = starButton.dataset.onText || '★';
+            const offText = starButton.dataset.offText || '☆';
+
+            starButton.textContent = data.is_starred ? onText : offText;
+        });
+
+        return;
+    }
+
+    const interestButton = event.target.closest('.js-interest-button');
+
+    if (interestButton) {
+        fetch(interestButton.dataset.url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        })
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            const target = document.getElementById(interestButton.dataset.target);
+            target.textContent = data.interest;
+        });
+    }
+});
+</script>
+<body>
+    <div class="site-bg">
+        <header class="navbar">
+            <div class="navbar-inner">
+                <a class="logo" href="{% url 'ideas:idea-list' %}">My <span>SW Idea</span> Manage</a>
+
+                <nav class="nav-menu">
+                    <a href="{% url 'ideas:idea-create' %}">아이디어 등록</a>
+                    <a href="{% url 'ideas:idea-list' %}">아이디어 관리</a>
+                    <a href="{% url 'ideas:devtool-create' %}">개발툴 등록</a>
+                    <a href="{% url 'ideas:devtool-list' %}">개발툴 관리</a>
+                
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'users:profile' %}">Profile</a>
+
+                        <form action="{% url 'users:logout' %}" method="POST" class="logout-form">
+                            {% csrf_token %}
+                            <button type="submit">로그아웃</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'users:login' %}">로그인</a>
+                        <a href="{% url 'users:signup' %}">회원가입</a>
+                    {% endif %}
+                </nav>
+            </div>
+        </header>
+
+        <main class="page-wrap">
+            <section class="content-panel">
+                {% block content %}
+                {% endblock %}
+            </section>
+        </main>
+    </div>
+
+    {% block script %}
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,82 @@
+<div class="idea-grid">
+    {% for idea in ideas %}
+        <div class="idea-card">
+            {% if user.is_authenticated %}
+                <button
+                    class="star-button js-star-button"
+                    type="button"
+                    data-url="{% url 'ideas:idea-star-toggle' idea.pk %}"
+                    data-on-text="★"
+                    data-off-text="☆"
+                >
+                    {% if idea.pk in starred_ids %}
+                        ★
+                    {% else %}
+                        ☆
+                    {% endif %}
+                </button>
+            {% else %}
+                <a class="star-button" href="{% url 'users:login' %}">☆</a>
+            {% endif %}
+
+            {% if idea.image %}
+                <img class="idea-thumb" src="{{ idea.image.url }}" alt="{{ idea.title }}">
+            {% else %}
+                <div class="idea-thumb no-image">No Image</div>
+            {% endif %}
+
+            <h2 class="idea-card-title">
+                <a href="{% url 'ideas:idea-detail' idea.pk %}">
+                    {{ idea.title }}
+                </a>
+            </h2>
+
+            <div class="idea-divider"></div>
+
+            <p class="idea-meta">예상 개발 툴 : {{ idea.devtool.name }}</p>
+
+            <p class="idea-meta">
+                아이디어 관심도 :
+                <span id="interest-{{ idea.pk }}">{{ idea.interest }}</span>
+
+                <button
+                    class="small-btn js-interest-button"
+                    type="button"
+                    data-url="{% url 'ideas:idea-interest-update' idea.pk 'plus' %}"
+                    data-target="interest-{{ idea.pk }}"
+                >
+                    +
+                </button>
+
+                <button
+                    class="small-btn js-interest-button"
+                    type="button"
+                    data-url="{% url 'ideas:idea-interest-update' idea.pk 'minus' %}"
+                    data-target="interest-{{ idea.pk }}"
+                >
+                    -
+                </button>
+            </p>
+        </div>
+    {% empty %}
+        <p class="empty">검색 결과가 없습니다.</p>
+    {% endfor %}
+</div>
+
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a class="page-arrow" href="?q={{ q|urlencode }}&sort={{ sort }}&page={{ page_obj.previous_page_number }}">‹</a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+        {% if num == page_obj.number %}
+            <span class="page-number active">{{ num }}</span>
+        {% else %}
+            <a class="page-number" href="?q={{ q|urlencode }}&sort={{ sort }}&page={{ num }}">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <a class="page-arrow" href="?q={{ q|urlencode }}&sort={{ sort }}&page={{ page_obj.next_page_number }}">›</a>
+    {% endif %}
+</div>
