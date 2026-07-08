@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {{ post.author.username }}의 게시물 | Pirostagram
+{% endblock %}
+
+{% block content %}
+    <div class="post-detail-page">
+        <article class="frame-13 post-detail-frame" aria-label="{{ post.author.username }}의 게시글">
+            <header class="frame-14">
+                <a
+                    href="{% url 'users:profile' post.author.username %}"
+                    class="post-author-profile"
+                >
+                    {% if post.author.profile.profile_image %}
+                        <img
+                            class="ellipse-3"
+                            src="{{ post.author.profile.profile_image.url }}"
+                            alt="{{ post.author.username }}의 프로필 이미지"
+                        >
+                    {% else %}
+                        <img
+                            class="ellipse-3 default-profile-image"
+                            src="{% static 'images/default_profile.png' %}"
+                            alt="기본 프로필 이미지"
+                        >
+                    {% endif %}
+
+                    <span class="text-wrapper-8">
+                        {{ post.author.username }}
+                    </span>
+                </a>
+
+                <time
+                    class="text-wrapper-9"
+                    datetime="{{ post.created_at|date:'c' }}"
+                >
+                    {{ post.created_at|timesince }} 전
+                </time>
+
+                {% if request.user == post.author %}
+                    <div class="post-owner-actions">
+                        <a href="{% url 'posts:update' post.id %}">
+                            수정
+                        </a>
+
+                        <form
+                            action="{% url 'posts:delete' post.id %}"
+                            method="POST"
+                            onsubmit="return confirm('게시물을 삭제하시겠습니까?');"
+                        >
+                            {% csrf_token %}
+
+                            <button type="submit">
+                                삭제
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+            </header>
+
+            <div class="post-image-list">
+                {% for post_image in post.images.all %}
+                    <img
+                        class="rectangle-3"
+                        src="{{ post_image.image.url }}"
+                        alt="{{ post.author.username }}의 게시글 이미지"
+                    >
+                {% empty %}
+                    <div class="post-image-empty">
+                        이미지가 없습니다.
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="frame-15" aria-label="게시글 반응">
+                <div class="frame-16">
+                    <form
+                        class="like-form"
+                        data-post-id="{{ post.id }}"
+                        action="{% url 'posts:like_toggle' post.id %}"
+                        method="POST"
+                    >
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="like-button {% if post.is_liked %}is-liked{% endif %}"
+                            aria-label="좋아요"
+                        >
+                            <span class="like-icon">
+                                {% if post.is_liked %}
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"></path>
+                                    </svg>
+                                {% else %}
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M16.792 3.904C18.1064 3.97667 19.3389 4.56591 20.2207 5.54331C21.1026 6.52071 21.5624 7.80705 21.5 9.122C21.5 12.194 18.848 14.081 16.303 16.344C13.791 18.587 12.438 19.813 12 20.096C11.523 19.787 9.857 18.273 7.697 16.344C5.141 14.072 2.5 12.167 2.5 9.122C2.43756 7.80705 2.89739 6.52071 3.77926 5.54331C4.66113 4.56591 5.89357 3.97667 7.208 3.904C7.93614 3.88193 8.65756 4.04919 9.30171 4.3894C9.94586 4.72962 10.4907 5.23117 10.883 5.845C11.723 7.02 11.863 7.608 12.003 7.608C12.143 7.608 12.281 7.02 13.113 5.842C13.5031 5.22533 14.0481 4.7218 14.6937 4.38172C15.3393 4.04164 16.0628 3.87691 16.792 3.904ZM16.792 1.904C15.8839 1.87493 14.981 2.05109 14.1504 2.41935C13.3199 2.78762 12.5831 3.33851 11.995 4.031C11.4074 3.34053 10.6721 2.79091 9.84354 2.42276C9.01498 2.0546 8.11428 1.87732 7.208 1.904C5.36287 1.97615 3.62138 2.77599 2.36434 4.1286C1.1073 5.48121 0.436992 7.27654 0.499998 9.122C0.499998 12.732 3.05 14.949 5.515 17.092C5.798 17.338 6.084 17.586 6.368 17.839L7.395 18.757C8.51504 19.8228 9.68926 20.8301 10.913 21.775C11.2368 21.9846 11.6143 22.0962 12 22.0962C12.3857 22.0962 12.7632 21.9846 13.087 21.775C14.3497 20.8013 15.56 19.7615 16.713 18.66L17.635 17.836C17.928 17.576 18.225 17.317 18.52 17.062C20.854 15.037 23.5 12.742 23.5 9.122C23.563 7.27654 22.8927 5.48121 21.6357 4.1286C20.3786 2.77599 18.6371 1.97615 16.792 1.904Z"></path>
+                                    </svg>
+                                {% endif %}
+                            </span>
+                        </button>
+                    </form>
+
+                    <span class="text-wrapper-10">
+                        좋아요
+                        <strong id="like-count-{{ post.id }}">{{ post.likes.count }}</strong>개
+                    </span>
+                </div>
+
+                <div class="frame-17">
+                    <div class="frame-4" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20.656 17.008C21.8711 14.9061 22.2795 12.4337 21.8048 10.0527C21.3301 7.67172 20.0048 5.54497 18.0765 4.06978C16.1482 2.59458 13.7488 1.87186 11.3266 2.0366C8.90429 2.20135 6.62485 3.24231 4.91406 4.96501C3.20327 6.68772 2.17816 8.97432 2.03022 11.3977C1.88229 13.821 2.62165 16.2153 4.11019 18.1334C5.59873 20.0514 7.73462 21.3619 10.1189 21.82C12.5031 22.2782 14.9726 21.8527 17.066 20.623L22 22L20.656 17.008Z"></path>
+                        </svg>
+                    </div>
+
+                    <span class="text-wrapper-10">
+                        댓글 {{ post.comments.count }}개
+                    </span>
+                </div>
+            </div>
+
+            <div class="group-7">
+                <a href="{% url 'users:profile' post.author.username %}" class="text-wrapper-11">
+                    {{ post.author.username }}
+                </a>
+
+                <span class="text-wrapper-12">
+                    {{ post.content }}
+                </span>
+            </div>
+
+            <div class="post-detail-body">
+                {% if top_level_comments %}
+                    <div class="comment-list">
+                        {% for comment in top_level_comments %}
+                            <div class="comment-thread">
+                                <div class="comment-item">
+                                    <div class="comment-item-text">
+                                        <a href="{% url 'users:profile' comment.author.username %}">
+                                            {{ comment.author.username }}
+                                        </a>
+
+                                        {{ comment.content }}
+                                    </div>
+
+                                    <div class="comment-item-actions">
+                                        <button
+                                            type="button"
+                                            class="comment-reply-toggle js-reply-toggle"
+                                            data-comment-id="{{ comment.id }}"
+                                        >
+                                            답글달기
+                                        </button>
+
+                                        {% if request.user == comment.author %}
+                                            <a href="{% url 'posts:comment_update' comment.id %}">
+                                                수정
+                                            </a>
+
+                                            <form
+                                                action="{% url 'posts:comment_delete' comment.id %}"
+                                                method="POST"
+                                                onsubmit="return confirm('댓글을 삭제하시겠습니까?');"
+                                            >
+                                                {% csrf_token %}
+
+                                                <button type="submit">
+                                                    삭제
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <form
+                                    id="reply-form-{{ comment.id }}"
+                                    class="comment-reply-form"
+                                    action="{% url 'posts:comment_reply' comment.id %}"
+                                    method="POST"
+                                    hidden
+                                >
+                                    {% csrf_token %}
+
+                                    <input
+                                        type="text"
+                                        name="content"
+                                        placeholder="{{ comment.author.username }}님에게 답글 달기..."
+                                        autocomplete="off"
+                                        maxlength="300"
+                                        required
+                                    >
+
+                                    <button type="submit">
+                                        게시
+                                    </button>
+                                </form>
+
+                                {% if comment.replies.all %}
+                                    <div class="comment-reply-list">
+                                        {% for reply in comment.replies.all %}
+                                            <div class="comment-item comment-reply-item">
+                                                <div class="comment-item-text">
+                                                    <a href="{% url 'users:profile' reply.author.username %}">
+                                                        {{ reply.author.username }}
+                                                    </a>
+
+                                                    {{ reply.content }}
+                                                </div>
+
+                                                {% if request.user == reply.author %}
+                                                    <div class="comment-item-actions">
+                                                        <a href="{% url 'posts:comment_update' reply.id %}">
+                                                            수정
+                                                        </a>
+
+                                                        <form
+                                                            action="{% url 'posts:comment_delete' reply.id %}"
+                                                            method="POST"
+                                                            onsubmit="return confirm('댓글을 삭제하시겠습니까?');"
+                                                        >
+                                                            {% csrf_token %}
+
+                                                            <button type="submit">
+                                                                삭제
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="comment-empty">
+                        아직 댓글이 없습니다.
+                    </p>
+                {% endif %}
+
+                <form
+                    class="comment-create-form"
+                    action="{% url 'posts:comment_create' post.id %}"
+                    method="POST"
+                >
+                    {% csrf_token %}
+
+                    {{ comment_form.content }}
+
+                    <button type="submit">
+                        게시
+                    </button>
+                </form>
+            </div>
+        </article>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/like.js' %}"></script>
+    <script src="{% static 'js/comment-reply.js' %}"></script>
+{% endblock %}

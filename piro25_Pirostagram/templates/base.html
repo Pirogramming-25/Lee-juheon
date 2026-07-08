@@ -1,0 +1,237 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}
+            Pirostagram
+        {% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/globals.css' %}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
+    {% block extra_css %}
+    {% endblock %}
+</head>
+
+<body>
+    <div
+        class="
+            screen
+            {% if not request.user.is_authenticated %}
+                screen-guest
+            {% endif %}
+        "
+    >
+        {% if request.user.is_authenticated %}
+            <aside
+                class="frame"
+                aria-label="주요 탐색"
+            >
+                <!-- 로고 -->
+                <a
+                    class="div"
+                    href="{% url 'posts:feed' %}"
+                    aria-label="Pirostagram 홈으로 이동"
+                >
+                    <svg
+                        class="icons"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <rect
+                            x="3"
+                            y="3"
+                            width="18"
+                            height="18"
+                            rx="5"
+                        ></rect>
+
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="4"
+                        ></circle>
+
+                        <circle
+                            cx="17.5"
+                            cy="6.5"
+                            r="1"
+                            class="icon-filled"
+                        ></circle>
+                    </svg>
+
+                    <h1 class="text-wrapper">
+                        Pirostagram
+                    </h1>
+                </a>
+
+                <!-- 사이드 메뉴 -->
+                <nav
+                    class="frame-2"
+                    aria-label="사이드 메뉴"
+                >
+                    <!-- 홈 -->
+                    <a
+                        class="frame-3"
+                        href="{% url 'posts:feed' %}"
+                        aria-current="page"
+                    >
+                        <div class="frame-wrapper">
+                            <div
+                                class="frame-4"
+                                aria-hidden="true"
+                            >
+                                <svg viewBox="0 0 24 24" class="icon-fill">
+                                    <path d="M19.75 21.5H15.25C14.5595 21.5 14 20.9405 14 20.25V15.75C14 15.1975 13.5525 14.75 13 14.75H11C10.4475 14.75 10 15.1975 10 15.75V20.25C10 20.9405 9.4405 21.5 8.75 21.5H4.25C3.5595 21.5 3 20.9405 3 20.25V10.7065C3 9.557 3.527 8.471 4.4295 7.76L11.5355 2.1605C11.808 1.9465 12.192 1.9465 12.464 2.1605L19.571 7.76C20.4735 8.471 21 9.5565 21 10.7055V20.25C21 20.9405 20.4405 21.5 19.75 21.5Z"></path>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <span class="text-wrapper-2">
+                            홈
+                        </span>
+                    </a>
+
+                    <!-- 게시글 검색 -->
+                    <a
+                        class="frame-5"
+                        href="{% url 'posts:search' %}"
+                    >
+                        <div
+                            class="frame-4"
+                            aria-hidden="true"
+                        >
+                            <svg viewBox="0 0 24 24">
+                                <path d="M21 21L16.66 16.66"></path>
+                                <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z"></path>
+                            </svg>
+                        </div>
+
+                        <span class="text-wrapper-3">
+                            게시글 검색
+                        </span>
+                    </a>
+
+                    <!-- 유저 검색 -->
+                    <a
+                        class="frame-5"
+                        href="{% url 'users:search' %}"
+                    >
+                        <div
+                            class="frame-4"
+                            aria-hidden="true"
+                        >
+                            <svg viewBox="0 0 24 24">
+                                <path d="M21 21L16.66 16.66"></path>
+                                <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z"></path>
+                            </svg>
+                        </div>
+
+                        <span class="text-wrapper-3">
+                            유저 검색
+                        </span>
+                    </a>
+
+                    <!-- 게시글 만들기 -->
+                    <a
+                        class="frame-6"
+                        href="{% url 'posts:create' %}"
+                    >
+                        <div
+                            class="frame-4"
+                            aria-hidden="true"
+                        >
+                            <svg viewBox="0 0 24 24">
+                                <path d="M5 12H19"></path>
+                                <path d="M12 5V19"></path>
+                            </svg>
+                        </div>
+
+                        <span class="text-wrapper-3">
+                            게시글 만들기
+                        </span>
+                    </a>
+
+                    <!-- 프로필 -->
+                    <a
+                        class="frame-7"
+                        href="{% url 'users:profile' request.user.username %}"
+                    >
+                        {% if request.user.profile.profile_image %}
+                            <img
+                                class="ellipse"
+                                src="{{ request.user.profile.profile_image.url }}"
+                                alt="{{ request.user.username }}의 프로필 이미지"
+                            >
+                        {% else %}
+                            <img
+                                class="ellipse"
+                                src="{% static 'images/default_profile.png' %}"
+                                alt="기본 프로필 이미지"
+                            >
+                        {% endif %}
+
+                        <span class="text-wrapper-3">
+                            프로필
+                        </span>
+                    </a>
+
+                    <!-- 로그아웃 -->
+                    <form
+                        class="sidebar-logout-form"
+                        action="{% url 'users:logout' %}"
+                        method="POST"
+                    >
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="sidebar-logout-button"
+                        >
+                            <span
+                                class="frame-4"
+                                aria-hidden="true"
+                            >
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M10 4H5v16h5"></path>
+                                    <path d="M14 8l4 4-4 4"></path>
+                                    <path d="M8 12h10"></path>
+                                </svg>
+                            </span>
+
+                            <span class="text-wrapper-3">
+                                로그아웃
+                            </span>
+                        </button>
+                    </form>
+                </nav>
+            </aside>
+        {% endif %}
+
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    {% block script %}
+    {% endblock %}
+</body>
+</html>

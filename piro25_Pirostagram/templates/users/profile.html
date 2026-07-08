@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {{ profile_user.username }} | Pirostagram
+{% endblock %}
+
+{% block content %}
+    <section class="profile-page">
+        <header class="profile-header">
+            {% if profile.profile_image %}
+                <img
+                    class="profile-avatar"
+                    src="{{ profile.profile_image.url }}"
+                    alt="{{ profile_user.username }}의 프로필 이미지"
+                >
+            {% else %}
+                <img
+                    class="profile-avatar default-profile-image"
+                    src="{% static 'images/default_profile.png' %}"
+                    alt="기본 프로필 이미지"
+                >
+            {% endif %}
+
+            <div class="profile-header-info">
+                <span class="profile-username">
+                    {{ profile_user.username }}
+                </span>
+
+                {% if profile.name %}
+                    <span class="profile-name">
+                        {{ profile.name }}
+                    </span>
+                {% endif %}
+
+                <div class="profile-stats">
+                    <span>
+                        게시물 <strong>{{ posts.count }}</strong>
+                    </span>
+
+                    <span>
+                        팔로워 <strong>{{ follower_count }}</strong>
+                    </span>
+
+                    <span>
+                        팔로우 <strong>{{ following_count }}</strong>
+                    </span>
+                </div>
+
+                <div class="profile-actions">
+                    {% if request.user == profile_user %}
+                        <a href="{% url 'users:profile_edit' %}" class="btn-neutral">
+                            프로필 편집
+                        </a>
+
+                        <a
+                            href="#"
+                            class="btn-neutral"
+                            aria-disabled="true"
+                            title="추후 구현 예정"
+                            onclick="return false;"
+                        >
+                            보관함 보기
+                        </a>
+                    {% else %}
+                        <form
+                            action="{% url 'users:follow' profile_user.username %}"
+                            method="POST"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="btn-neutral {% if not is_following %}is-active{% endif %}"
+                            >
+                                {% if is_following %}
+                                    팔로잉
+                                {% else %}
+                                    팔로우
+                                {% endif %}
+                            </button>
+                        </form>
+
+                        <a
+                            href="#"
+                            class="btn-neutral"
+                            aria-disabled="true"
+                            title="추후 구현 예정"
+                            onclick="return false;"
+                        >
+                            메세지 보내기
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </header>
+
+        {% if posts %}
+            <div class="profile-posts-grid">
+                {% for post in posts %}
+                    <a
+                        href="{% url 'posts:detail' post.id %}"
+                        class="profile-post-thumb"
+                    >
+                        {% with first_image=post.images.first %}
+                            {% if first_image %}
+                                <img
+                                    src="{{ first_image.image.url }}"
+                                    alt="{{ profile_user.username }}의 게시글 이미지"
+                                >
+                            {% endif %}
+                        {% endwith %}
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="profile-empty-state">
+                <div class="profile-empty-icon" aria-hidden="true">
+                    <svg viewBox="0 0 62 62">
+                        <path d="M31 61.3541C47.7641 61.3541 61.3542 47.7641 61.3542 31C61.3542 14.2358 47.7641 0.645813 31 0.645813C14.2359 0.645813 0.645828 14.2358 0.645828 31C0.645828 47.7641 14.2359 61.3541 31 61.3541Z"></path>
+                        <path d="M31.0013 38.75C34.7265 38.75 37.7464 35.7209 37.7464 31.9843C37.7464 28.2476 34.7265 25.2185 31.0013 25.2185C27.2761 25.2185 24.2562 28.2476 24.2562 31.9843C24.2562 35.7209 27.2761 38.75 31.0013 38.75Z"></path>
+                        <path d="M41.3294 44.5625C42.7029 44.5601 44.0192 44.0123 44.9889 43.0395C45.9585 42.0667 46.502 40.7486 46.5 39.3751V25.482C46.502 24.1079 45.9582 22.7892 44.9881 21.816C44.0179 20.8429 42.701 20.2949 41.3269 20.2927H40.1973C39.5491 20.2852 38.9185 20.081 38.389 19.7071C37.8596 19.3332 37.4562 18.8072 37.2323 18.1989C36.5606 16.5953 35.4298 16.1458 33.8862 16.1458H28.0847C26.5412 16.1458 25.4103 16.5947 24.7386 18.1983C24.5146 18.8066 24.1111 19.3326 23.5815 19.7065C23.0519 20.0804 22.4212 20.2846 21.773 20.2921H20.6731C19.2988 20.2941 17.9816 20.842 17.0113 21.8151C16.0409 22.7883 15.4968 24.1071 15.4987 25.4813V39.3745C15.4976 40.0548 15.6305 40.7287 15.8899 41.3576C16.1492 41.9865 16.53 42.5582 17.0103 43.0399C17.4906 43.5217 18.0611 43.9041 18.6893 44.1654C19.3174 44.4266 19.9909 44.5615 20.6712 44.5625H41.3294Z"></path>
+                    </svg>
+                </div>
+
+                <p class="profile-empty-title">
+                    사진 공유
+                </p>
+
+                {% if request.user == profile_user %}
+                    <p class="profile-empty-desc">
+                        사진을 공유하면 회원님의 프로필에 표시됩니다.
+                    </p>
+
+                    <a href="{% url 'posts:create' %}" class="profile-empty-link">
+                        첫 사진 공유하기
+                    </a>
+                {% else %}
+                    <p class="profile-empty-desc">
+                        아직 게시물이 없습니다.
+                    </p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}

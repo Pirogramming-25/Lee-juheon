@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    사용자 검색 | Pirostagram
+{% endblock %}
+
+{% block content %}
+    <section class="search-page">
+        <form
+            action="{% url 'users:search' %}"
+            method="GET"
+            class="search-input-wrapper"
+            role="search"
+        >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M21 21L16.66 16.66"></path>
+                <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z"></path>
+            </svg>
+
+            <input
+                type="text"
+                name="q"
+                id="search-input"
+                class="search-input"
+                value="{{ query }}"
+                placeholder="검색"
+                autocomplete="off"
+                autofocus
+            >
+
+            <a
+                href="{% url 'users:search' %}"
+                id="search-clear-button"
+                class="search-clear-button {% if not query %}is-hidden{% endif %}"
+                aria-label="검색어 지우기"
+            >
+                <svg viewBox="0 0 15 15">
+                    <circle cx="7.5" cy="7.5" r="7.5" fill="#D9D9D9"></circle>
+                    <line x1="4.35355" y1="4.64645" x2="10.2461" y2="10.539" stroke="#F0F2F5"></line>
+                    <line x1="10.6906" y1="4.93687" x2="4.79803" y2="10.8294" stroke="#F0F2F5"></line>
+                </svg>
+            </a>
+        </form>
+
+        {% if query %}
+            <p class="search-result-heading">
+                "{{ query }}" 검색 결과
+            </p>
+
+            <div class="search-result-list">
+                {% for result_user in users %}
+                    <a
+                        href="{% url 'users:profile' result_user.username %}"
+                        class="search-result-item"
+                    >
+                        {% if result_user.profile.profile_image %}
+                            <img
+                                class="search-result-avatar"
+                                src="{{ result_user.profile.profile_image.url }}"
+                                alt="{{ result_user.username }}의 프로필 이미지"
+                            >
+                        {% else %}
+                            <img
+                                class="search-result-avatar default-profile-image"
+                                src="{% static 'images/default_profile.png' %}"
+                                alt="기본 프로필 이미지"
+                            >
+                        {% endif %}
+
+                        <div class="search-result-text">
+                            <span class="search-result-username">
+                                {{ result_user.username }}
+                            </span>
+
+                            {% if result_user.profile.name %}
+                                <span class="search-result-name">
+                                    {{ result_user.profile.name }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </a>
+                {% empty %}
+                    <p class="search-empty-message">
+                        검색 결과가 없습니다.
+                    </p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}
+
+{% block script %}
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const input = document.querySelector("#search-input");
+            const clearButton = document.querySelector("#search-clear-button");
+
+            if (input && clearButton) {
+                input.addEventListener("input", () => {
+                    clearButton.classList.toggle(
+                        "is-hidden",
+                        input.value.length === 0
+                    );
+                });
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="story-create-page">
+    <section class="story-create-container">
+        <div class="story-create-header">
+            <a href="{% url 'posts:feed' %}">
+                취소
+            </a>
+
+            <h1>스토리 만들기</h1>
+        </div>
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+            class="story-create-form"
+        >
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="form-errors">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="form-field">
+                <label for="{{ form.images.id_for_label }}">
+                    사진 선택
+                </label>
+
+                {{ form.images }}
+
+                {% if form.images.help_text %}
+                    <p>
+                        {{ form.images.help_text }}
+                    </p>
+                {% endif %}
+
+                {% if form.images.errors %}
+                    <div class="form-errors">
+                        {{ form.images.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div
+                id="story-preview"
+                class="story-preview"
+            ></div>
+
+            <button type="submit">
+                스토리 공유
+            </button>
+        </form>
+    </section>
+</main>
+{% endblock %}
+
+{% block script %}
+<script>
+    const imageInput = document.querySelector(
+        'input[name="images"]'
+    );
+
+    const previewContainer = document.querySelector(
+        "#story-preview"
+    );
+
+    if (imageInput && previewContainer) {
+        imageInput.addEventListener("change", () => {
+            previewContainer.innerHTML = "";
+
+            const files = Array.from(imageInput.files);
+
+            if (files.length > 10) {
+                alert("스토리는 최대 10장까지 선택할 수 있습니다.");
+                imageInput.value = "";
+                return;
+            }
+
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+
+                reader.addEventListener("load", (event) => {
+                    const previewItem = document.createElement("div");
+                    previewItem.classList.add("story-preview-item");
+
+                    const number = document.createElement("span");
+                    number.textContent = index + 1;
+
+                    const image = document.createElement("img");
+                    image.src = event.target.result;
+                    image.alt = `${index + 1}번째 스토리 이미지`;
+
+                    previewItem.appendChild(number);
+                    previewItem.appendChild(image);
+                    previewContainer.appendChild(previewItem);
+                });
+
+                reader.readAsDataURL(file);
+            });
+        });
+    }
+</script>
+{% endblock %}
