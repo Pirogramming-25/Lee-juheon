@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {{ page_title }} | Pirostagram
+{% endblock %}
+
+{% block content %}
+    <div class="form-page">
+        <section class="form-card">
+            <div class="form-card-header">
+                <h1 class="form-card-title">{{ page_title }}</h1>
+
+                {% if post %}
+                    <a href="{% url 'posts:detail' post.id %}" class="form-card-cancel">
+                        취소
+                    </a>
+                {% else %}
+                    <a href="{% url 'posts:feed' %}" class="form-card-cancel">
+                        취소
+                    </a>
+                {% endif %}
+            </div>
+
+            {% if post %}
+                {% with current_image=post.images.first %}
+                    {% if current_image %}
+                        <div class="form-current-image is-post">
+                            <img
+                                src="{{ current_image.image.url }}"
+                                alt="현재 게시글 이미지"
+                            >
+
+                            <span class="form-current-image-label">
+                                현재 이미지 (새 이미지를 선택하면 교체됩니다)
+                            </span>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="field-group">
+                    <label class="form-field-label" for="{{ form.image.id_for_label }}">
+                        {{ form.image.label }}
+                    </label>
+
+                    {{ form.image }}
+
+                    {% if form.image.errors %}
+                        <div class="field-error">{{ form.image.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="field-group">
+                    <label class="form-field-label" for="{{ form.content.id_for_label }}">
+                        내용
+                    </label>
+
+                    {{ form.content }}
+
+                    {% if form.content.errors %}
+                        <div class="field-error">{{ form.content.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn-fill-blue">
+                    {{ submit_text }}
+                </button>
+            </form>
+        </section>
+    </div>
+{% endblock %}

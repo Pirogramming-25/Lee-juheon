@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    로그인 | Pirostagram
+{% endblock %}
+
+{% block content %}
+    <div class="auth-screen">
+        <section class="auth-hero">
+            <img
+                src="{% static 'images/instagram_logo.png' %}"
+                alt="Pirostagram"
+                class="auth-hero-logo"
+            >
+
+            <h1 class="auth-hero-title">
+                <span class="highlight">친한 친구</span>의 일상 속 순간들을 확인해보세요.
+            </h1>
+
+            <img
+                src="{% static 'images/login_hero.png' %}"
+                alt=""
+                class="auth-hero-image"
+                aria-hidden="true"
+            >
+        </section>
+
+        <section class="auth-panel">
+            <h2 class="auth-panel-title">
+                Pirostagram으로 로그인
+            </h2>
+
+            {% if form.non_field_errors %}
+                <div class="form-non-field-error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="field-group">
+                    <input
+                        type="text"
+                        name="username"
+                        id="id_username"
+                        class="text-input"
+                        placeholder="사용자 아이디"
+                        autocomplete="username"
+                        value="{{ form.username.value|default:'' }}"
+                        required
+                    >
+
+                    {% if form.username.errors %}
+                        <div class="field-error">{{ form.username.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="field-group">
+                    <div class="password-field-wrapper">
+                        <input
+                            type="password"
+                            name="password"
+                            id="id_password"
+                            class="text-input js-password-input"
+                            placeholder="비밀번호"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle-button js-password-toggle"
+                            aria-label="비밀번호 표시"
+                        >
+                            <svg viewBox="0 0 24 24" class="icon-eye-open">
+                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+
+                            <img
+                                src="{% static 'images/password_hide_icon.png' %}"
+                                alt=""
+                                class="icon-eye-closed"
+                            >
+                        </button>
+                    </div>
+
+                    {% if form.password.errors %}
+                        <div class="field-error">{{ form.password.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn-fill-blue">
+                    로그인
+                </button>
+            </form>
+
+            <a href="{% url 'users:signup' %}" class="btn-outline-blue">
+                새 계정 만들기
+            </a>
+        </section>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/password-toggle.js' %}"></script>
+{% endblock %}

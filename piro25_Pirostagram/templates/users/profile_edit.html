@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    프로필 편집 | Pirostagram
+{% endblock %}
+
+{% block content %}
+    <div class="form-page">
+        <section class="form-card">
+            <div class="form-card-header">
+                <h1 class="form-card-title">프로필 편집</h1>
+
+                <a href="{% url 'users:profile' request.user.username %}" class="form-card-cancel">
+                    취소
+                </a>
+            </div>
+
+            <div class="form-current-image">
+                {% if profile.profile_image %}
+                    <img
+                        src="{{ profile.profile_image.url }}"
+                        alt="{{ request.user.username }} 프로필 이미지"
+                    >
+                {% else %}
+                    <img
+                        src="{% static 'images/default_profile.png' %}"
+                        alt="기본 프로필 이미지"
+                    >
+                {% endif %}
+
+                <span class="form-current-image-label">
+                    현재 프로필 사진
+                </span>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="field-group">
+                    <label class="form-field-label" for="{{ form.profile_image.id_for_label }}">
+                        프로필 사진 변경
+                    </label>
+
+                    {{ form.profile_image }}
+
+                    {% if form.profile_image.errors %}
+                        <div class="field-error">{{ form.profile_image.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="field-group">
+                    <label class="form-field-label" for="{{ form.name.id_for_label }}">
+                        이름
+                    </label>
+
+                    {{ form.name }}
+
+                    {% if form.name.errors %}
+                        <div class="field-error">{{ form.name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="field-group">
+                    <label class="form-field-label" for="{{ form.bio.id_for_label }}">
+                        소개
+                    </label>
+
+                    {{ form.bio }}
+
+                    {% if form.bio.errors %}
+                        <div class="field-error">{{ form.bio.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn-fill-blue">
+                    저장하기
+                </button>
+            </form>
+        </section>
+    </div>
+{% endblock %}

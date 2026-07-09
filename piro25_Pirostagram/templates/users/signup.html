@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    회원가입 | Pirostagram
+{% endblock %}
+
+{% block content %}
+    <div class="auth-screen">
+        <section class="auth-hero">
+            <img
+                src="{% static 'images/instagram_logo.png' %}"
+                alt="Pirostagram"
+                class="auth-hero-logo"
+            >
+
+            <h1 class="auth-hero-title">
+                <span class="highlight">피로그래밍</span> 동료들과
+                일상 속 순간들을 나눠보세요.
+            </h1>
+        </section>
+
+        <section class="auth-panel">
+            <h2 class="auth-panel-title">
+                Pirostagram 계정 만들기
+            </h2>
+
+            {% if form.non_field_errors %}
+                <div class="form-non-field-error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="field-group">
+                    <input
+                        type="text"
+                        name="username"
+                        id="id_username"
+                        class="text-input"
+                        placeholder="사용자 아이디"
+                        autocomplete="username"
+                        value="{{ form.username.value|default:'' }}"
+                        required
+                    >
+
+                    {% if form.username.errors %}
+                        <div class="field-error">{{ form.username.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="field-group">
+                    <input
+                        type="text"
+                        name="name"
+                        id="id_name"
+                        class="text-input"
+                        placeholder="이름"
+                        value="{{ form.name.value|default:'' }}"
+                        required
+                    >
+
+                    {% if form.name.errors %}
+                        <div class="field-error">{{ form.name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="field-group">
+                    <input
+                        type="email"
+                        name="email"
+                        id="id_email"
+                        class="text-input"
+                        placeholder="이메일 (선택)"
+                        autocomplete="email"
+                        value="{{ form.email.value|default:'' }}"
+                    >
+
+                    {% if form.email.errors %}
+                        <div class="field-error">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="field-group">
+                    <div class="password-field-wrapper">
+                        <input
+                            type="password"
+                            name="password1"
+                            id="id_password1"
+                            class="text-input js-password-input"
+                            placeholder="비밀번호"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle-button js-password-toggle"
+                            aria-label="비밀번호 표시"
+                        >
+                            <svg viewBox="0 0 24 24" class="icon-eye-open">
+                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+
+                            <img
+                                src="{% static 'images/password_hide_icon.png' %}"
+                                alt=""
+                                class="icon-eye-closed"
+                            >
+                        </button>
+                    </div>
+
+                    {% if form.password1.errors %}
+                        <div class="field-error">{{ form.password1.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="field-group">
+                    <div class="password-field-wrapper">
+                        <input
+                            type="password"
+                            name="password2"
+                            id="id_password2"
+                            class="text-input js-password-input"
+                            placeholder="비밀번호 확인"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle-button js-password-toggle"
+                            aria-label="비밀번호 표시"
+                        >
+                            <svg viewBox="0 0 24 24" class="icon-eye-open">
+                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+
+                            <img
+                                src="{% static 'images/password_hide_icon.png' %}"
+                                alt=""
+                                class="icon-eye-closed"
+                            >
+                        </button>
+                    </div>
+
+                    {% if form.password2.errors %}
+                        <div class="field-error">{{ form.password2.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn-fill-blue">
+                    가입하기
+                </button>
+            </form>
+
+            <a href="{% url 'users:login' %}" class="btn-outline-blue">
+                이미 계정이 있어요
+            </a>
+        </section>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/password-toggle.js' %}"></script>
+{% endblock %}
