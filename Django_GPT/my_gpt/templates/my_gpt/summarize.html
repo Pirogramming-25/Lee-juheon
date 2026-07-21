@@ -1,0 +1,33 @@
+{% extends "my_gpt/base.html" %}
+{% load static %}
+
+{% block title %}문서 요약 - Django GPT{% endblock %}
+
+{% block content %}
+<h1>📄 문서 요약</h1>
+
+<p><strong>사용 모델:</strong> {{ model_id }}</p>
+<p><strong>입력 언어:</strong> 영어</p>
+
+<textarea id="summarize-input" maxlength="5000" placeholder="요약할 영어 문서를 입력해주세요. (100자 이상)"></textarea>
+
+<button id="summarize-run-btn">요약 실행</button>
+
+<p id="summarize-loading" class="loading-text" style="display: none;">처리 중...</p>
+
+<div id="summarize-error" class="error-box" style="display: none;"></div>
+
+<div id="summarize-result" class="result-box" style="display: none;"></div>
+
+<h2>최근 실행 기록</h2>
+<ul id="summarize-history-list">
+    {% for h in histories %}
+        <li>{{ h.input_text|truncatechars:50 }} → {{ h.output_text|truncatechars:50 }} ({{ h.created_at|date:"Y-m-d H:i" }})</li>
+    {% empty %}
+        <li class="empty-history">아직 실행 기록이 없습니다.</li>
+    {% endfor %}
+</ul>
+
+<script src="{% static 'my_gpt/js/common.js' %}"></script>
+<script src="{% static 'my_gpt/js/summarize.js' %}"></script>
+{% endblock %}
