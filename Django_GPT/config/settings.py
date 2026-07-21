@@ -126,7 +126,6 @@ STATICFILES_DIRS = [BASE_DIR / "my_gpt" / "static"]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = "/sentiment/"
 LOGOUT_REDIRECT_URL = "/sentiment/"

@@ -12,7 +12,7 @@ Django 웹 서비스 위에서 Hugging Face `pipeline()`을 이용해
 
 ## 실행 방법
 
-\`\`\`bash
+```bash
 # 1. 가상환경 생성 및 활성화
 python -m venv venv
 source venv/Scripts/activate   # Windows Git Bash
@@ -33,7 +33,7 @@ python manage.py createsuperuser
 
 # 6. 서버 실행
 python manage.py runserver
-\`\`\`
+```
 
 브라우저에서 `http://127.0.0.1:8000/sentiment/` 로 접속합니다.
 
@@ -56,18 +56,18 @@ python manage.py runserver
 - **Task**: `text-classification`
 - **입력 언어**: 영어
 - **출력 레이블**: `positive` / `neutral` / `negative`
-- **라이선스**: Hugging Face 모델 카드 참고 (non-commercial 계열)
+- **라이선스**: CC-BY-4.0
 
 #### 입력 예시
-\`\`\`
+```
 I absolutely love this product! It exceeded all my expectations and works perfectly.
-\`\`\`
+```
 
 #### 출력 예시
-\`\`\`
+```
 감정: positive
 신뢰도: 99.06%
-\`\`\`
+```
 
 #### 실행 화면
 [스크린샷 첨부]
@@ -80,20 +80,20 @@ I absolutely love this product! It exceeded all my expectations and works perfec
 - **Task**: `summarization`
 - **입력 언어**: 영어
 - **출력**: 원문 길이, 요약문 길이, 요약 비율, 요약문
-- **라이선스**: Apache 2.0
+- **라이선스**: Apache-2.0
 
 #### 입력 예시
-\`\`\`
+```
 Artificial intelligence has rapidly transformed various industries over the past decade...
-\`\`\`
+```
 
 #### 출력 예시
-\`\`\`
+```
 원문 길이: 788자
 요약문 길이: 340자
 요약 비율: 43.15%
 요약 결과: AI-powered systems are being used to analyze massive amounts of data...
-\`\`\`
+```
 
 #### 실행 화면
 [스크린샷 첨부]
@@ -106,18 +106,18 @@ Artificial intelligence has rapidly transformed various industries over the past
 - **Task**: `text-classification` (multi-label)
 - **입력 언어**: 영어
 - **출력 레이블**: `toxic`, `severe_toxic`, `obscene`, `threat`, `insult`, `identity_hate`
-- **라이선스**: Hugging Face 모델 카드 참고
+- **라이선스**: Apache-2.0
 
 #### 입력 예시
-\`\`\`
+```
 You are so stupid, I can't believe how useless you are at everything.
-\`\`\`
+```
 
 #### 출력 예시
-\`\`\`
+```
 최고 위험 레이블: toxic
 위험 점수: 98.54%
-\`\`\`
+```
 
 #### 실행 화면
 [스크린샷 첨부]

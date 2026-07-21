@@ -19,8 +19,6 @@ SUMMARIZE_MODEL_ID = "sshleifer/distilbart-cnn-6-6"
 MODERATE_MODEL_ID = "unitary/toxic-bert"
 
 
-SENTIMENT_MODEL_ID = "cardiffnlp/twitter-roberta-base-sentiment-latest"
-
 
 def sentiment_page(request):
     histories = []

@@ -6,7 +6,13 @@
 {% block content %}
 <h1>🔗 복합 AI 분석 (AI 고객 피드백 분석 리포트)</h1>
 
-<p><strong>사용 모델:</strong> 요약 → 감정 분석 → 유해 표현 분석 (Pipeline Chaining)</p>
+<p><strong>사용 모델:</strong></p>
+<ul>
+    <li>sshleifer/distilbart-cnn-6-6 (요약)</li>
+    <li>cardiffnlp/twitter-roberta-base-sentiment-latest (감정 분석)</li>
+    <li>unitary/toxic-bert (유해 표현 분석)</li>
+</ul>
+<p>요약 → 감정 분석 → 유해 표현 분석 순서로 체이닝됩니다 (Pipeline Chaining).</p>
 <p><strong>입력 언어:</strong> 영어 (고객 리뷰/피드백, 200자 이상)</p>
 
 <textarea id="combo-input" maxlength="5000" placeholder="영어 고객 리뷰 또는 피드백을 입력해주세요. (200자 이상)"></textarea>
