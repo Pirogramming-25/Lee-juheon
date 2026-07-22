@@ -4,14 +4,18 @@
 {% block title %}문서 요약 - Django GPT{% endblock %}
 
 {% block content %}
-<h1>📄 문서 요약</h1>
+<h1>문서 요약</h1>
+<span class="badge badge-auth">LOGIN REQUIRED</span>
 
-<p><strong>사용 모델:</strong> {{ model_id }}</p>
-<p><strong>입력 언어:</strong> 영어</p>
+<div class="panel input-panel">
+    <span class="eyebrow">INPUT</span>
+    <p class="meta-line"><strong>MODEL</strong> {{ model_id }}</p>
+    <p class="meta-line"><strong>LANG</strong> 영어</p>
 
-<textarea id="summarize-input" maxlength="5000" placeholder="요약할 영어 문서를 입력해주세요. (100자 이상)"></textarea>
+    <textarea id="summarize-input" maxlength="5000" placeholder="요약할 영어 문서를 입력해주세요. (100자 이상)"></textarea>
 
-<button id="summarize-run-btn">요약 실행</button>
+    <button id="summarize-run-btn">요약 실행</button>
+</div>
 
 <p id="summarize-loading" class="loading-text" style="display: none;">처리 중...</p>
 

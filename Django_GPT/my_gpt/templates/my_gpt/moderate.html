@@ -4,14 +4,18 @@
 {% block title %}유해 표현 분석 - Django GPT{% endblock %}
 
 {% block content %}
-<h1>🚨 유해 표현 분석</h1>
+<h1>유해 표현 분석</h1>
+<span class="badge badge-auth">LOGIN REQUIRED</span>
 
-<p><strong>사용 모델:</strong> {{ model_id }}</p>
-<p><strong>입력 언어:</strong> 영어</p>
+<div class="panel input-panel">
+    <span class="eyebrow">INPUT</span>
+    <p class="meta-line"><strong>MODEL</strong> {{ model_id }}</p>
+    <p class="meta-line"><strong>LANG</strong> 영어</p>
 
-<textarea id="moderate-input" maxlength="1000" placeholder="분석할 영어 문장을 입력해주세요."></textarea>
+    <textarea id="moderate-input" maxlength="1000" placeholder="분석할 영어 문장을 입력해주세요."></textarea>
 
-<button id="moderate-run-btn">유해 표현 분석 실행</button>
+    <button id="moderate-run-btn">유해 표현 분석 실행</button>
+</div>
 
 <p id="moderate-loading" class="loading-text" style="display: none;">처리 중...</p>
 

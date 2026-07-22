@@ -28,11 +28,14 @@ cp .env.example .env
 # 4. DB 마이그레이션
 python manage.py migrate
 
-# 5. 관리자 계정 생성 (선택)
+# 5. 관리자 계정 생성 (로그인 기능 확인을 위해 필수)
 python manage.py createsuperuser
 
 # 6. 서버 실행
 python manage.py runserver
+
+> 별도의 회원가입 기능은 없으며, `createsuperuser`로 생성한 계정으로 로그인하여
+> `/summarize/`, `/moderate/`, `/combo/` 등 로그인 필요 기능을 확인할 수 있습니다.
 ```
 
 브라우저에서 `http://127.0.0.1:8000/sentiment/` 로 접속합니다.

@@ -60,13 +60,30 @@ function renderResult(result) {
     scoreP.textContent = `위험 점수: ${result.highest_score}%`;
     resultEl.appendChild(scoreP);
 
-    const ul = document.createElement("ul");
     result.all_scores.forEach((item) => {
-        const li = document.createElement("li");
-        li.textContent = `${item.label}: ${item.score}%`;
-        ul.appendChild(li);
+        const meter = document.createElement("div");
+        meter.className = "meter";
+
+        const labelSpan = document.createElement("span");
+        labelSpan.className = "meter-label";
+        labelSpan.textContent = item.label;
+        meter.appendChild(labelSpan);
+
+        const track = document.createElement("div");
+        track.className = "meter-track";
+        const fill = document.createElement("div");
+        fill.className = "meter-fill negative";
+        fill.style.width = `${item.score}%`;
+        track.appendChild(fill);
+        meter.appendChild(track);
+
+        const valueSpan = document.createElement("span");
+        valueSpan.className = "meter-value";
+        valueSpan.textContent = `${item.score}%`;
+        meter.appendChild(valueSpan);
+
+        resultEl.appendChild(meter);
     });
-    resultEl.appendChild(ul);
 
     resultEl.style.display = "block";
 }

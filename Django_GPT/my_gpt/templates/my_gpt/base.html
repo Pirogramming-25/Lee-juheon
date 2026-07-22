@@ -5,11 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Django GPT{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'my_gpt/css/style.css' %}">
 </head>
 <body>
     {% csrf_token %}
     <nav class="navbar">
+        <span class="navbar-brand">Django·GPT</span>
         <a class="nav-link {% if request.resolver_match.url_name == 'sentiment_page' %}active{% endif %}"
            href="{% url 'sentiment_page' %}">감정 분석</a>
         <a class="nav-link {% if request.resolver_match.url_name == 'summarize_page' %}active{% endif %}"

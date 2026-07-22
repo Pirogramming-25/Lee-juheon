@@ -55,11 +55,18 @@ runBtn.addEventListener("click", async () => {
     }
 });
 
+function scoreClass(label) {
+    const l = label.toLowerCase();
+    if (l.includes("positive")) return "positive";
+    if (l.includes("negative")) return "negative";
+    return "neutral";
+}
+
 function renderResult(result) {
     resultEl.innerHTML = "";
 
     const labelP = document.createElement("p");
-    labelP.innerHTML = "감정: ";
+    labelP.append("감정: ");
     const labelStrong = document.createElement("strong");
     labelStrong.textContent = result.label;
     labelP.appendChild(labelStrong);
@@ -69,13 +76,30 @@ function renderResult(result) {
     scoreP.textContent = `신뢰도: ${result.score}%`;
     resultEl.appendChild(scoreP);
 
-    const ul = document.createElement("ul");
     result.all_scores.forEach((item) => {
-        const li = document.createElement("li");
-        li.textContent = `${item.label}: ${item.score}%`;
-        ul.appendChild(li);
+        const meter = document.createElement("div");
+        meter.className = "meter";
+
+        const labelSpan = document.createElement("span");
+        labelSpan.className = "meter-label";
+        labelSpan.textContent = item.label;
+        meter.appendChild(labelSpan);
+
+        const track = document.createElement("div");
+        track.className = "meter-track";
+        const fill = document.createElement("div");
+        fill.className = `meter-fill ${scoreClass(item.label)}`;
+        fill.style.width = `${item.score}%`;
+        track.appendChild(fill);
+        meter.appendChild(track);
+
+        const valueSpan = document.createElement("span");
+        valueSpan.className = "meter-value";
+        valueSpan.textContent = `${item.score}%`;
+        meter.appendChild(valueSpan);
+
+        resultEl.appendChild(meter);
     });
-    resultEl.appendChild(ul);
 
     resultEl.style.display = "block";
 }

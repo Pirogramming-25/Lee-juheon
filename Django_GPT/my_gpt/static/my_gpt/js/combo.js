@@ -67,6 +67,38 @@ function setBusy(isBusy) {
     loadingEl.style.display = isBusy ? "block" : "none";
 }
 
+function scoreClass(label) {
+    const l = label.toLowerCase();
+    if (l.includes("positive")) return "positive";
+    if (l.includes("negative")) return "negative";
+    return "neutral";
+}
+
+function buildMeter(label, score, cls) {
+    const meter = document.createElement("div");
+    meter.className = "meter";
+
+    const labelSpan = document.createElement("span");
+    labelSpan.className = "meter-label";
+    labelSpan.textContent = label;
+    meter.appendChild(labelSpan);
+
+    const track = document.createElement("div");
+    track.className = "meter-track";
+    const fill = document.createElement("div");
+    fill.className = `meter-fill ${cls}`;
+    fill.style.width = `${score}%`;
+    track.appendChild(fill);
+    meter.appendChild(track);
+
+    const valueSpan = document.createElement("span");
+    valueSpan.className = "meter-value";
+    valueSpan.textContent = `${score}%`;
+    meter.appendChild(valueSpan);
+
+    return meter;
+}
+
 function renderResult(originalText, result) {
     resultEl.innerHTML = "";
 
@@ -87,22 +119,20 @@ function renderResult(originalText, result) {
     summaryP.textContent = result.summary;
     addSection("2. 요약문", summaryP);
 
-    const sentimentP = document.createElement("p");
-    sentimentP.textContent = `${result.sentiment.label} (${result.sentiment.score}%)`;
-    addSection("3. 감정 분석", sentimentP);
+    const sentimentWrapper = document.createElement("div");
+    sentimentWrapper.appendChild(
+        buildMeter(result.sentiment.label, result.sentiment.score, scoreClass(result.sentiment.label))
+    );
+    addSection("3. 감정 분석", sentimentWrapper);
 
     const toxicityWrapper = document.createElement("div");
     const toxicitySummaryP = document.createElement("p");
     toxicitySummaryP.textContent = `최고 위험 레이블: ${result.toxicity.highest_label} (${result.toxicity.highest_score}%)`;
     toxicityWrapper.appendChild(toxicitySummaryP);
 
-    const ul = document.createElement("ul");
     result.toxicity.all_scores.forEach((item) => {
-        const li = document.createElement("li");
-        li.textContent = `${item.label}: ${item.score}%`;
-        ul.appendChild(li);
+        toxicityWrapper.appendChild(buildMeter(item.label, item.score, "negative"));
     });
-    toxicityWrapper.appendChild(ul);
     addSection("4. 유해 표현 분석", toxicityWrapper);
 
     const verdictP = document.createElement("p");
