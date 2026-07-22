@@ -33,10 +33,9 @@ python manage.py createsuperuser
 
 # 6. 서버 실행
 python manage.py runserver
-
+```
 > 별도의 회원가입 기능은 없으며, `createsuperuser`로 생성한 계정으로 로그인하여
 > `/summarize/`, `/moderate/`, `/combo/` 등 로그인 필요 기능을 확인할 수 있습니다.
-```
 
 브라우저에서 `http://127.0.0.1:8000/sentiment/` 로 접속합니다.
 
@@ -72,9 +71,6 @@ I absolutely love this product! It exceeded all my expectations and works perfec
 신뢰도: 99.06%
 ```
 
-#### 실행 화면
-[스크린샷 첨부]
-
 ---
 
 ### 2. 문서 요약 (`/summarize/`) — 로그인 필요
@@ -98,9 +94,6 @@ Artificial intelligence has rapidly transformed various industries over the past
 요약 결과: AI-powered systems are being used to analyze massive amounts of data...
 ```
 
-#### 실행 화면
-[스크린샷 첨부]
-
 ---
 
 ### 3. 유해 표현 분석 (`/moderate/`) — 로그인 필요
@@ -122,9 +115,6 @@ You are so stupid, I can't believe how useless you are at everything.
 위험 점수: 98.54%
 ```
 
-#### 실행 화면
-[스크린샷 첨부]
-
 ---
 
 ## 🔴 챌린지 과제 — 복합 AI 분석 (`/combo/`)
@@ -137,10 +127,6 @@ You are so stupid, I can't believe how useless you are at everything.
 - 입력: 영어 고객 리뷰/피드백 (200자 ~ 5,000자)
 - 재생성 버튼: 동일한 원문으로 파이프라인을 다시 실행 (요약 단계에서
   `do_sample=True`, `num_beams=1` 옵션을 사용하여 실행할 때마다 다른 요약 결과 생성)
-
-#### 실행 화면
-[스크린샷 첨부: 복합 분석 결과]
-[스크린샷 첨부: 재생성 결과]
 
 ---
 
