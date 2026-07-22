@@ -25,6 +25,11 @@ runBtn.addEventListener("click", async () => {
             body: JSON.stringify({ text: text }),
         });
 
+        if (response.status === 401) {
+            window.location.href = "/accounts/login/?next=" + encodeURIComponent(window.location.pathname) + "&required=1";
+            return;
+        }
+
         const data = await response.json();
 
         if (!response.ok) {
