@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Django GPT{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'my_gpt/css/style.css' %}">
+</head>
+<body>
+    {% csrf_token %}
+    <nav class="navbar">
+        <span class="navbar-brand">Django·GPT</span>
+        <a class="nav-link {% if request.resolver_match.url_name == 'sentiment_page' %}active{% endif %}"
+           href="{% url 'sentiment_page' %}">감정 분석</a>
+        <a class="nav-link {% if request.resolver_match.url_name == 'summarize_page' %}active{% endif %}"
+           href="{% url 'summarize_page' %}">문서 요약</a>
+        <a class="nav-link {% if request.resolver_match.url_name == 'moderate_page' %}active{% endif %}"
+           href="{% url 'moderate_page' %}">유해 표현 분석</a>
+        <a class="nav-link {% if request.resolver_match.url_name == 'combo_page' %}active{% endif %}"
+           href="{% url 'combo_page' %}">복합 분석</a>
+
+        <span class="nav-spacer"></span>
+
+        {% if user.is_authenticated %}
+            <span class="nav-user">{{ user.username }}님</span>
+            <form method="post" action="{% url 'logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="nav-link logout-btn">로그아웃</button>
+            </form>
+        {% else %}
+            <a class="nav-link" href="{% url 'login' %}">로그인</a>
+        {% endif %}
+    </nav>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

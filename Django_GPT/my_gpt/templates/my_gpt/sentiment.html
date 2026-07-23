@@ -1,0 +1,46 @@
+{% extends "my_gpt/base.html" %}
+{% load static %}
+
+{% block title %}감정 분석 - Django GPT{% endblock %}
+
+{% block content %}
+<h1>감정 분석</h1>
+<span class="badge badge-public">PUBLIC ACCESS</span>
+
+<div class="panel input-panel">
+    <span class="eyebrow">INPUT</span>
+    <p class="meta-line"><strong>MODEL</strong> {{ model_id }}</p>
+    <p class="meta-line"><strong>LANG</strong> 영어</p>
+
+    <textarea id="sentiment-input" maxlength="1000" placeholder="분석할 영어 문장을 입력해주세요."></textarea>
+
+    <button id="sentiment-run-btn">감정 분석 실행</button>
+</div>
+
+<p id="sentiment-loading" class="loading-text" style="display: none;">처리 중...</p>
+
+<div id="sentiment-error" class="error-box" style="display: none;"></div>
+
+<div id="sentiment-result" class="result-box" style="display: none;"></div>
+
+<h2>최근 실행 기록</h2>
+{% if user.is_authenticated %}
+    <ul id="sentiment-history-list">
+        {% for h in histories %}
+            <li>{{ h.input_text|truncatechars:50 }} → {{ h.output_text }} ({{ h.created_at|date:"Y-m-d H:i" }})</li>
+        {% empty %}
+            <li class="empty-history">아직 실행 기록이 없습니다.</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <ul id="sentiment-history-list">
+        <li class="empty-history">(비로그인 상태: 새로고침 시 초기화됩니다)</li>
+    </ul>
+{% endif %}
+
+<script>
+    window.IS_AUTHENTICATED = {{ user.is_authenticated|yesno:"true,false" }};
+</script>
+<script src="{% static 'my_gpt/js/common.js' %}"></script>
+<script src="{% static 'my_gpt/js/sentiment.js' %}"></script>
+{% endblock %}

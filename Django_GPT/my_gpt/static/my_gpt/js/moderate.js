@@ -1,0 +1,109 @@
+const inputEl = document.getElementById("moderate-input");
+const runBtn = document.getElementById("moderate-run-btn");
+const loadingEl = document.getElementById("moderate-loading");
+const errorEl = document.getElementById("moderate-error");
+const resultEl = document.getElementById("moderate-result");
+const historyListEl = document.getElementById("moderate-history-list");
+
+runBtn.addEventListener("click", async () => {
+    const text = inputEl.value;
+
+    errorEl.style.display = "none";
+    resultEl.style.display = "none";
+
+    runBtn.disabled = true;
+    inputEl.disabled = true;
+    loadingEl.style.display = "block";
+
+    try {
+        const response = await fetch("/moderate/run/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": CSRF_TOKEN,
+            },
+            body: JSON.stringify({ text: text }),
+        });
+
+        if (response.status === 401) {
+            window.location.href = "/accounts/login/?next=" + encodeURIComponent(window.location.pathname) + "&required=1";
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            errorEl.textContent = data.error || "오류가 발생했습니다.";
+            errorEl.style.display = "block";
+            return;
+        }
+
+        const result = data.data;
+        renderResult(result);
+        prependHistoryItem(text, result);
+    } catch (err) {
+        errorEl.textContent = "네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
+        errorEl.style.display = "block";
+    } finally {
+        runBtn.disabled = false;
+        inputEl.disabled = false;
+        loadingEl.style.display = "none";
+    }
+});
+
+function renderResult(result) {
+    resultEl.innerHTML = "";
+
+    const labelP = document.createElement("p");
+    labelP.append("최고 위험 레이블: ");
+    const strong = document.createElement("strong");
+    strong.textContent = result.highest_label;
+    labelP.appendChild(strong);
+    resultEl.appendChild(labelP);
+
+    const scoreP = document.createElement("p");
+    scoreP.textContent = `위험 점수: ${result.highest_score}%`;
+    resultEl.appendChild(scoreP);
+
+    result.all_scores.forEach((item) => {
+        const meter = document.createElement("div");
+        meter.className = "meter";
+
+        const labelSpan = document.createElement("span");
+        labelSpan.className = "meter-label";
+        labelSpan.textContent = item.label;
+        meter.appendChild(labelSpan);
+
+        const track = document.createElement("div");
+        track.className = "meter-track";
+        const fill = document.createElement("div");
+        fill.className = "meter-fill negative";
+        fill.style.width = `${item.score}%`;
+        track.appendChild(fill);
+        meter.appendChild(track);
+
+        const valueSpan = document.createElement("span");
+        valueSpan.className = "meter-value";
+        valueSpan.textContent = `${item.score}%`;
+        meter.appendChild(valueSpan);
+
+        resultEl.appendChild(meter);
+    });
+
+    resultEl.style.display = "block";
+}
+
+function prependHistoryItem(text, result) {
+    const emptyItem = historyListEl.querySelector(".empty-history");
+    if (emptyItem) {
+        emptyItem.remove();
+    }
+
+    const li = document.createElement("li");
+    li.textContent = `${text.slice(0, 50)} → ${result.highest_label} (방금 실행)`;
+    historyListEl.insertBefore(li, historyListEl.firstChild);
+
+    while (historyListEl.children.length > 5) {
+        historyListEl.removeChild(historyListEl.lastChild);
+    }
+}
