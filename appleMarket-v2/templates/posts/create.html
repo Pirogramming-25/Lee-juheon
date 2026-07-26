@@ -6,6 +6,11 @@
 {% block content %}
 <form action="{% url 'posts:create' %}" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
+    {% if form.errors %}
+    <div style="background-color: #ffe5e5; color: #c0392b; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-weight: 600;">
+        ⚠️ 입력값을 다시 확인해주세요
+    </div>
+    {% endif %}
     {{ form.as_p }}
     <button class="btn btn-success">등록하기</button>
 </form>
