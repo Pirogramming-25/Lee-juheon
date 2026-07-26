@@ -58,6 +58,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         fatInput.value = '';
                         return;
                     }
+
+                    if (data.calorie == null && data.carbohydrate == null && data.protein == null && data.fat == null) {
+                        alert('영양성분표에서 정보를 찾지 못했습니다. 이미지를 다시 확인해주세요.');
+                    }
+
                     calorieInput.value = data.calorie ?? '';
                     carbInput.value = data.carbohydrate ?? '';
                     proteinInput.value = data.protein ?? '';
