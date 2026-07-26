@@ -533,3 +533,18 @@ main > a.btn-danger:hover {
 .related-post {
     margin-bottom: 10px;
 }
+
+.errorlist {
+    list-style: none;
+    padding: 10px 14px;
+    margin: 0 0 6px;
+    background-color: #ffe5e5;
+    color: #c0392b;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+input[aria-invalid="true"] {
+    border-color: #e63946 !important;
+}

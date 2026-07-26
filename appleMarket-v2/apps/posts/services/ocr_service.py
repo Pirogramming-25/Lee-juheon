@@ -4,8 +4,10 @@ import os
 from django.conf import settings
 from .rules import clean_nutrition_result
 
-# conda applemarket-ocr 환경의 python 경로
-CONDA_PYTHON = r"C:\Users\user\miniconda3\envs\applemarket-ocr\python.exe"
+CONDA_PYTHON = os.environ.get(
+    "APPLEMARKET_AI_PYTHON",
+    r"C:\Users\user\miniconda3\envs\applemarket-ocr\python.exe",
+)
 
 # ocr_worker/analyze.py 스크립트 경로
 ANALYZE_SCRIPT = os.path.join(settings.BASE_DIR, 'ocr_worker', 'analyze.py')

@@ -28,7 +28,7 @@ def main(request):
         pass  # 필터를 무시하되, 기존 검색 필터를 유지
 
     if tag:
-        posts = posts.filter(hashtags__icontains=tag)
+        posts = [p for p in posts if tag in p.hashtags.split()]
 
     context = {
         'posts': posts,
@@ -47,8 +47,10 @@ def create(request):
     else:
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-        return redirect('/')
+            post = form.save()
+            return redirect('posts:detail', pk=post.pk)
+        context = { 'form': form }
+        return render(request, 'posts/create.html', context=context)
 
 def detail(request, pk):
     target_post = Post.objects.get(id = pk)
@@ -68,7 +70,12 @@ def update(request, pk):
         form = PostForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
             form.save()
-        return redirect('posts:detail', pk=pk)
+            return redirect('posts:detail', pk=pk)
+        context = {
+            'form': form,
+            'post': post,
+        }
+        return render(request, 'posts/update.html', context=context)
 
 def delete(request, pk):
     post = Post.objects.get(id=pk)

@@ -3,7 +3,10 @@ import json
 import os
 from django.conf import settings
 
-CONDA_PYTHON = r"C:\Users\user\miniconda3\envs\applemarket-ocr\python.exe"
+CONDA_PYTHON = os.environ.get(
+    "APPLEMARKET_AI_PYTHON",
+    r"C:\Users\user\miniconda3\envs\applemarket-ocr\python.exe",
+)
 DETECT_SCRIPT = os.path.join(settings.BASE_DIR, 'ocr_worker', 'detect_hashtags.py')
 
 
