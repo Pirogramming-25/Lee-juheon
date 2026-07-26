@@ -359,3 +359,5 @@ staticfiles/
 ocr_worker/*.pt
 ocr_worker/test_*
 yolo11n.pt
+ocr_worker/*.png
+ocr_worker/*.jpg
