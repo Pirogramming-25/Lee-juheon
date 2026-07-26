@@ -1,0 +1,5 @@
+appleMarket-v2/venv/
+appleMarket-v2/__pycache__/
+appleMarket-v2/*.pyc
+appleMarket-v2/db.sqlite3
+appleMarket-v2/media/

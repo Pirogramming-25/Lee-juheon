@@ -1,0 +1,39 @@
+import subprocess
+import json
+import os
+from django.conf import settings
+
+CONDA_PYTHON = r"C:\Users\user\miniconda3\envs\applemarket-ocr\python.exe"
+DETECT_SCRIPT = os.path.join(settings.BASE_DIR, 'ocr_worker', 'detect_hashtags.py')
+
+
+def detect_hashtags(image_path: str) -> list:
+    """
+    이미지 파일 경로를 받아 conda 환경에서 detect_hashtags.py를 실행하고
+    해시태그 리스트를 반환합니다.
+    """
+    env = os.environ.copy()
+    env['PYTHONIOENCODING'] = 'utf-8'
+    env['PYTHONUTF8'] = '1'
+
+    result = subprocess.run(
+        [CONDA_PYTHON, DETECT_SCRIPT, image_path],
+        capture_output=True,
+        text=True,
+        encoding='utf-8',
+        errors='replace',
+        timeout=120,
+        env=env,
+    )
+
+    if result.returncode != 0:
+        raise RuntimeError(f"해시태그 스크립트 실행 실패: {result.stderr}")
+
+    stdout = (result.stdout or '').strip()
+    if not stdout:
+        raise RuntimeError(f"해시태그 스크립트 출력이 없습니다. stderr: {result.stderr}")
+
+    last_line = stdout.splitlines()[-1]
+    data = json.loads(last_line)
+
+    return data.get('hashtags', [])
