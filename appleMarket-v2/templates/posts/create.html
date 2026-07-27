@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block head %}
+<title>post_create</title>
+{% endblock %}
+
+{% block content %}
+<form action="{% url 'posts:create' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if form.errors %}
+    <div style="background-color: #ffe5e5; color: #c0392b; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-weight: 600;">
+        ⚠️ 입력값을 다시 확인해주세요
+    </div>
+    {% endif %}
+    {{ form.as_p }}
+    <button class="btn btn-success">등록하기</button>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    // --- 영양성분 OCR ---
+    const nutritionInput = document.getElementById('id_nutrition_photo');
+    const calorieInput = document.getElementById('id_calorie');
+    const carbInput = document.getElementById('id_carbohydrate');
+    const proteinInput = document.getElementById('id_protein');
+    const fatInput = document.getElementById('id_fat');
+
+    if (nutritionInput) {
+        nutritionInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            calorieInput.value = '분석 중...';
+            carbInput.value = '분석 중...';
+            proteinInput.value = '분석 중...';
+            fatInput.value = '분석 중...';
+
+            const formData = new FormData();
+            formData.append('nutrition_photo', file);
+
+            fetch("{% url 'posts:ocr_analyze' %}", {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                body: formData,
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('OCR 분석 실패: ' + data.error);
+                        calorieInput.value = '';
+                        carbInput.value = '';
+                        proteinInput.value = '';
+                        fatInput.value = '';
+                        return;
+                    }
+
+                    if (data.calorie == null && data.carbohydrate == null && data.protein == null && data.fat == null) {
+                        alert('영양성분표에서 정보를 찾지 못했습니다. 이미지를 다시 확인해주세요.');
+                    }
+
+                    calorieInput.value = data.calorie ?? '';
+                    carbInput.value = data.carbohydrate ?? '';
+                    proteinInput.value = data.protein ?? '';
+                    fatInput.value = data.fat ?? '';
+                })
+                .catch(err => {
+                    alert('요청 실패: ' + err);
+                });
+        });
+    }
+
+    // --- 상품 자동 해시태깅 ---
+    const photoInput = document.getElementById('id_photo');
+    const hashtagInput = document.getElementById('id_hashtags');
+
+    if (photoInput) {
+        photoInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            hashtagInput.value = '분석 중...';
+
+            const formData = new FormData();
+            formData.append('photo', file);
+
+            fetch("{% url 'posts:hashtag_analyze' %}", {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                body: formData,
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('해시태그 분석 실패: ' + data.error);
+                        hashtagInput.value = '';
+                        return;
+                    }
+                    hashtagInput.value = data.hashtags ?? '';
+                })
+                .catch(err => {
+                    alert('요청 실패: ' + err);
+                });
+        });
+    }
+});
+</script>
+{% endblock %}
